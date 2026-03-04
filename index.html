@@ -61,7 +61,6 @@
         }
         .mode-btn:hover { background-color: var(--primary); color: #fff; }
 
-        /* 追加：データ一覧用スタイル */
         .data-list-container {
             text-align: left;
             margin-top: 20px;
@@ -317,14 +316,10 @@
         return array;
     }
 
-    /* === 追加：データ一覧表示機能 === */
     function showDataList() {
         const body = document.getElementById('data-list-body');
         body.innerHTML = '';
-        
-        // 選択肢用のダミーを除き、説明があるものだけを表示
         const listData = quizData.filter(q => q.desc);
-        
         listData.forEach(q => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -333,7 +328,6 @@
             `;
             body.appendChild(tr);
         });
-
         document.getElementById('start-screen').classList.remove('active');
         document.getElementById('data-screen').classList.add('active');
     }
@@ -344,7 +338,15 @@
         const selectedCats = Array.from(document.querySelectorAll('.range-chk:checked')).map(cb => cb.value);
         if (selectedCats.length === 0) { alert("出題範囲を選んでください"); return; }
 
-        const tasks = quizData.filter(q => selectedCats.includes(q.cat) && q.desc);
+        // グループFのフィルタリング：逆転モードでない時はFを排除
+        const tasks = quizData.filter(q => {
+            if (!q.desc || !selectedCats.includes(q.cat)) return false;
+            if (q.group === 'F' && !isReverseMode) return false;
+            return true;
+        });
+
+        if (tasks.length === 0) { alert("出題できる問題がありません"); return; }
+
         currentQueue = shuffle([...tasks]);
         currentIndex = 0;
         retryQueue = [];
