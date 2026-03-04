@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>公共 重要用語マスター（高度細分化版）</title>
+    <title>公共 重要用語マスター（フルセット・表示最適化版）</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -13,7 +13,7 @@
             --bg: #f3f4f6;
             --card: #ffffff;
             --text: #1f2937;
-            --link: #7c3aed; /* 化学ボタン用の紫 */
+            --link: #7c3aed;
         }
 
         body {
@@ -33,47 +33,48 @@
             border-radius: 16px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 640px;
+            max-width: 680px;
             padding: 40px;
             text-align: center;
-            position: relative;
         }
 
-        h1 { font-size: 1.6rem; margin-bottom: 10px; color: var(--primary); }
-        .subtitle { font-size: 0.85rem; color: #6b7280; margin-bottom: 25px; }
+        h1 { font-size: 1.6rem; margin-bottom: 5px; color: var(--primary); }
+        .subtitle { font-size: 0.85rem; color: #6b7280; margin-bottom: 20px; }
 
-        .mode-select { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .range-selector {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .range-selector h3 { font-size: 0.9rem; margin-top: 0; margin-bottom: 10px; color: #374151; }
+        .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; cursor: pointer; }
+
+        .mode-select { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
         .mode-btn {
             background-color: #fff; border: 2px solid var(--primary); color: var(--primary);
-            padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s;
-            text-decoration: none; display: block;
+            padding: 12px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; cursor: pointer; transition: 0.2s;
+            text-decoration: none; display: flex; align-items: center; justify-content: center;
         }
         .mode-btn:hover { background-color: var(--primary); color: #fff; }
 
-        /* 化学ボタン用スタイル */
-        .link-btn {
-            border-color: var(--link);
-            color: var(--link);
-            margin-top: 10px;
-        }
-        .link-btn:hover {
-            background-color: var(--link);
-            color: #fff;
-        }
+        .link-btn { border-color: var(--link); color: var(--link); margin-top: 20px; width: 100%; }
+        .link-btn:hover { background-color: var(--link); color: #fff; }
 
-        .external-area {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .option-label { cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: #eff6ff; border-radius: 20px; border: 1px solid #bfdbfe; margin-bottom: 20px; font-size: 0.9rem; }
+        .option-label { cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: #eff6ff; border-radius: 20px; border: 1px solid #bfdbfe; margin-bottom: 20px; font-size: 0.85rem; }
 
         .screen { display: none; }
         .screen.active { display: block; }
 
         .progress { font-size: 0.85rem; color: #6b7280; margin-bottom: 15px; font-weight: bold; }
-        .question-box { font-size: 1.1rem; font-weight: bold; margin-bottom: 25px; line-height: 1.6; min-height: 100px; display: flex; align-items: center; justify-content: center; background: #f9fafb; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; }
+        .question-box { font-size: 1.05rem; font-weight: bold; margin-bottom: 25px; line-height: 1.6; min-height: 100px; display: flex; align-items: center; justify-content: center; background: #f9fafb; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; }
+
+        /* フラッシュカード用フォント設定 */
+        .fc-large { font-size: 1.6rem; font-weight: bold; color: var(--primary); }
+        .fc-medium { font-size: 1.0rem; line-height: 1.6; color: var(--text); font-weight: normal; }
 
         .options-grid { display: grid; gap: 10px; grid-template-columns: 1fr; }
         button.option-btn { background: #fff; border: 2px solid #e5e7eb; border-radius: 8px; padding: 14px; font-size: 0.95rem; cursor: pointer; text-align: left; width: 100%; }
@@ -87,11 +88,9 @@
         .flashcard-container { width: 100%; height: 260px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0s; }
         .flashcard-container.flipped .flashcard-inner { transform: rotateY(180deg); }
-        .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 12px; padding: 20px; box-sizing: border-box; border: 2px solid #e5e7eb; }
-        .flashcard-front { background-color: #fff; color: var(--primary); }
+        .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 12px; padding: 25px; box-sizing: border-box; border: 2px solid #e5e7eb; }
+        .flashcard-front { background-color: #fff; }
         .flashcard-back { background-color: #f0fdf4; transform: rotateY(180deg); border-color: var(--success); }
-        .fc-large { font-size: 1.6rem; font-weight: bold; }
-        .fc-medium { font-size: 1rem; line-height: 1.5; }
 
         .fc-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .fc-btn { padding: 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; }
@@ -109,21 +108,28 @@
 <div class="container">
     <div id="start-screen" class="screen active">
         <h1>公共 重要用語マスター</h1>
-        <p class="subtitle">統治・防衛・行政の専門分野別（細分化版）</p>
+        <p class="subtitle">フルセット・表示最適化版</p>
+
+        <div class="range-selector">
+            <h3>出題範囲を選択：</h3>
+            <div class="checkbox-group">
+                <label class="checkbox-item"><input type="checkbox" class="range-chk" value="小テスト" checked> 小テスト</label>
+                <label class="checkbox-item"><input type="checkbox" class="range-chk" value="順当マイノート" checked> 順当マイノート</label>
+                <label class="checkbox-item"><input type="checkbox" class="range-chk" value="重箱の隅をほじくる" checked> 重箱の隅をほじくる</label>
+            </div>
+        </div>
 
         <label class="option-label">
             <input type="checkbox" id="reverse-mode-chk"> 🔄 意味から用語を答える
         </label>
         
         <div class="mode-select">
-            <button class="mode-btn" onclick="startGame('flashcard')">フラッシュカード</button>
-            <button class="mode-btn" onclick="startGame('choice')">4択クイズ</button>
-            <button class="mode-btn" onclick="startGame('input')">記述チャレンジ</button>
+            <button class="mode-btn" onclick="startGame('flashcard')">カード</button>
+            <button class="mode-btn" onclick="startGame('choice')">4択</button>
+            <button class="mode-btn" onclick="startGame('input')">記述</button>
         </div>
 
-        <div class="external-area">
-            <a href="https://sithigh21147.github.io/chemoti/" class="mode-btn link-btn">化学はこちら</a>
-        </div>
+        <a href="https://sithigh21147.github.io/chemoti/" class="mode-btn link-btn">化学はこちら</a>
     </div>
 
     <div id="main-screen" class="screen">
@@ -133,8 +139,8 @@
         <div id="flashcard-area" style="display:none;">
             <div class="flashcard-container" id="flashcard-container" onclick="flipCard()">
                 <div class="flashcard-inner">
-                    <div class="flashcard-front"><div id="fc-front-content" class="fc-large"></div></div>
-                    <div class="flashcard-back"><div id="fc-back-content" class="fc-medium"></div></div>
+                    <div class="flashcard-front"><div id="fc-front-content"></div></div>
+                    <div class="flashcard-back"><div id="fc-back-content"></div></div>
                 </div>
             </div>
             <div class="fc-controls">
@@ -144,7 +150,6 @@
         </div>
 
         <div id="options-area" class="options-grid" style="display:none;"></div>
-
         <div id="input-area" class="input-area" style="display:none;">
             <input type="text" id="answer-input" placeholder="解答を入力" autocomplete="off">
             <button class="submit-btn" onclick="checkInputAnswer()">回答</button>
@@ -156,61 +161,64 @@
 
     <div id="result-screen" class="screen">
         <h1>全問終了！</h1>
-        <p>お疲れ様でした。</p>
+        <p>学習お疲れ様でした。</p>
         <button class="next-btn" onclick="location.reload()">トップに戻る</button>
     </div>
 </div>
 
 <script>
     const quizData = [
-        /* A: 防衛・自衛隊 */
-        { group: "A", term: "警察予備隊", desc: "1950年に朝鮮戦争の勃発をきっかけに設けられた部隊。" },
-        { group: "A", term: "保安隊", isDistractor: true },
-        { group: "A", term: "自衛隊", isDistractor: true },
+        /* === データ集約 (省略なし) === */
+        { cat: "小テスト", group: "A", term: "警察予備隊", desc: "1950年に朝鮮戦争の勃発をきっかけに設けられた部隊。" },
+        { cat: "小テスト", group: "B", term: "日米防衛協力のための指針", desc: "1978年に制定された「ガイドライン」、またの名を:" },
+        { cat: "小テスト", group: "B", term: "非核三原則", desc: "核兵器をもたず、つくらず、もちこませず" },
+        { cat: "小テスト", group: "B", term: "日米安保共同宣言", desc: "アジア太平洋地域に於いて日米安保体制を再定義した宣言。" },
+        { cat: "小テスト", group: "B", term: "重要影響事態法", desc: "周辺事態法を改正して生まれた法律。" },
+        { cat: "小テスト", group: "B", term: "集団的自衛権", desc: "2014年までは自衛のための最小限度の実力行使として認められなかった権利。" },
+        { cat: "小テスト", group: "C", term: "最高機関", desc: "国会は、国権の○○○○であつて、(憲法第41条)" },
+        { cat: "小テスト", group: "C", term: "両院協議会", desc: "衆議院と参議院で異なる議決をした場合に開くことができる。" },
+        { cat: "小テスト", group: "C", term: "党議拘束", desc: "政党に所属する議員は政党の決定に従う必要がある。" },
+        { cat: "小テスト", group: "C", term: "委任立法", desc: "国会が行うべき立法を行政機関に任せてしまうこと。" },
+        { cat: "小テスト", group: "B", term: "許認可権", desc: "行政指導と合わせて企業や業界を保護・統制するのに使う。" },
+        { cat: "小テスト", group: "C", term: "行政委員会", desc: "独立して職権を行使する合議制の決定機関。" },
+        { cat: "小テスト", group: "C", term: "国民審査", desc: "最高裁判所裁判官について、衆議院選挙と同時に開催されるもの。" },
+        { cat: "小テスト", group: "C", term: "弾劾裁判所", desc: "国会に設置する、訴追された裁判官をやめさせるもの。" },
+        { cat: "小テスト", group: "C", term: "起訴議決制度", desc: "検察審査会で起訴を相当と判断した場合、弁護士が被疑者を起訴する制度。" },
+        { cat: "小テスト", group: "C", term: "地方自治の本旨", desc: "住民自治と団体自治を保障する。" },
+        { cat: "小テスト", group: "C", term: "三位一体改革", desc: "地方分権と財政再建を目指した、税源移譲・補助金削減・交付金見直しの改革。" },
+        { cat: "小テスト", group: "C", term: "イニシアティブ", desc: "条例の制定・改廃請求権をカタカナで。" },
+        { cat: "小テスト", group: "B", term: "綱領", desc: "政党が国民の意見や要求をくみ上げてまとめるもの。" },
+        { cat: "小テスト", group: "B", term: "政党助成法", desc: "政党の活動費を国庫から補助する法律。" },
+        { cat: "小テスト", group: "B", term: "平等選挙", desc: "一人ひとりの投票の価値を平等に扱うこと。" },
+        { cat: "小テスト", group: "B", term: "政治資金規正法", desc: "政治資金の透明性確保を目的とする法律。" },
+        { cat: "小テスト", group: "C", term: "立法機関", desc: "国会は、国の唯一の○○○○である" },
+        { cat: "小テスト", group: "D", term: "小選挙区比例代表並立制", desc: "現在の衆議院選挙の制度。" },
+        { cat: "小テスト", group: "E", term: "ドント式", desc: "得票数を自然数で割り、商の大きい順に議席を割り振る方式。" },
+        { cat: "小テスト", group: "E", term: "アダムズ式", desc: "人口を一定数で割り切り上げて定数を算出する方式。" },
 
-        /* B1: 安全保障・日米関係 */
-        { group: "B1", term: "日米防衛協力のための指針", desc: "1978年に制定された「ガイドライン」、またの名を:" },
-        { group: "B1", term: "非核三原則", desc: "核兵器をもたず、つくらず、もちこませず" },
-        { group: "B1", term: "日米安保共同宣言", desc: "アジア太平洋地域に於いて日米安保体制を再定義した宣言。" },
-        { group: "B1", term: "重要影響事態法", desc: "周辺事態法を改正して生まれた法律。" },
-        { group: "B1", term: "集団的自衛権", desc: "2014年までは自衛のための最小限度の実力行使として認められなかった権利。" },
-        { group: "B1", term: "自衛のための必要最小限度の実力", desc: "現在の政府の自衛隊に対する見解。" },
+        /* 順当マイノート */
+        { cat: "順当マイノート", group: "B", term: "平和的生存権", desc: "全世界の国民が平和のうちに生存する権利。" },
+        { cat: "順当マイノート", group: "B", term: "国の交戦権", desc: "憲法第9条にて否認が定められた権利。" },
+        { cat: "順当マイノート", group: "A", term: "保安隊", desc: "1952年、日米安保が背景で改組され誕生した部隊。" },
+        { cat: "順当マイノート", group: "A", term: "自衛隊", desc: "1954年、米国とのMSA協定が背景で発足。" },
+        { cat: "順当マイノート", group: "A", term: "文民統制の原則", desc: "国防上の決定権は職業軍人でないものが持つこと。" },
+        { cat: "順当マイノート", group: "B", term: "国家安全保障会議", desc: "総理と少数の閣僚が情報交換や審議を行う機関。" },
+        { cat: "順当マイノート", group: "B", term: "日米地位協定", desc: "在日米軍基地や米軍人の法的地位を定めた協定。" },
+        { cat: "順当マイノート", group: "B", term: "思いやり予算", desc: "在日米軍駐留経費の一部を日本が負担する制度。" },
+        { cat: "順当マイノート", group: "B", term: "PKO協力法", desc: "世界各地へ自衛隊が派遣されるようにした法律。" },
+        { cat: "順当マイノート", group: "C", term: "免責特権", desc: "国会議員が院内の発言で院外の責任を問われない。" },
+        { cat: "順当マイノート", group: "C", term: "違憲審査権", desc: "裁判所が憲法に違反するかどうかを判断する権限。" },
+        { cat: "順当マイノート", group: "C", term: "地方分権一括法", desc: "機関委任事務を廃止した法律。" },
 
-        /* B2: 政党・選挙原則 */
-        { group: "B2", term: "綱領", desc: "政党が国民の意見や要求をくみ上げてまとめるもの。" },
-        { group: "B2", term: "政党助成法", desc: "政党の活動費を国庫から補助する法律。" },
-        { group: "B2", term: "平等選挙", desc: "一人ひとりの投票の価値を平等に扱うこと。" },
-        { group: "B2", term: "政治資金規正法", desc: "政治資金の透明性確保を目的とする法律。" },
+        /* 重箱の隅 */
+        { cat: "重箱の隅をほじくる", group: "F", term: "4分の1", desc: "総議員のこれだけの要求で臨時国会を召集できる。" },
+        { cat: "重箱の隅をほじくる", group: "F", term: "3分の2", desc: "衆議院で否決された法律案を再可決するのに必要。" },
+        { cat: "重箱の隅をほじくる", group: "C", term: "裁判員制度", desc: "重大事件の一審に18歳以上の国民が参加する制度。" },
+        { cat: "重箱の隅をほじくる", group: "C", term: "ブライス", desc: "地方自治を「民主主義の学校」と言った人。" },
 
-        /* C1: 行政・官僚の仕組み */
-        { group: "C1", term: "最高機関", desc: "国会は、国権の○○○○であつて、(憲法第41条)" },
-        { group: "C1", term: "立法機関", desc: "国会は、国の唯一の○○○○である" },
-        { group: "C1", term: "両院協議会", desc: "衆議院と参議院で異なる議決をした場合に開くことができる。" },
-        { group: "C1", term: "委任立法", desc: "国会が行うべき立法を行政機関に任せてしまうこと。" },
-        { group: "C1", term: "許認可権", desc: "行政指導と合わせて企業や業界を保護・統制するのに使う権限。" },
-        { group: "C1", term: "行政委員会", desc: "独立して職権を行使する合議制の決定機関。" },
-        { group: "C1", term: "官僚主義", desc: "公務員における権威主義や形式主義、縄張り意識。" },
-        { group: "C1", term: "官僚政治", desc: "政策決定で官僚が中心的役割を果たすこと。" },
-        { group: "C1", term: "党議拘束", desc: "政党に所属する議員は政党の決定に従う必要がある。" },
-
-        /* C2: 司法制度・裁判 */
-        { group: "C2", term: "国民審査", desc: "最高裁判所裁判官について、衆議院選挙と同時に開催されるもの。" },
-        { group: "C2", term: "弾劾裁判所", desc: "国会に設置する、訴追された裁判官をやめさせるもの。" },
-        { group: "C2", term: "起訴議決制度", desc: "検察審査会で起訴相当と判断した場合、弁護士が被疑者を起訴する制度。" },
-        { group: "C2", term: "統治行為論", desc: "高度に政治的な事件には裁判所の違憲審査権が及ばないとする考え方。" },
-        { group: "C2", term: "訴追", desc: "犯罪かどうかにかかわらず、国民の信託に違反する行為を行うこと（罷免を求めて裁判にかけること）。" },
-
-        /* C3: 地方自治 */
-        { group: "C3", term: "地方自治の本旨", desc: "住民自治と団体自治を保障する原則。" },
-        { group: "C3", term: "三位一体改革", desc: "地方分権と財政再建を目指した、税源移譲・補助金削減・交付金見直しの改革。" },
-        { group: "C3", term: "イニシアティブ", desc: "条例の制定・改廃請求権をカタカナで言うと。" },
-
-        /* D & E: 選挙制度・計算 */
-        { group: "D", term: "小選挙区比例代表並立制", desc: "現在の衆議院選挙の制度。" },
-        { group: "D", term: "中選挙区制", isDistractor: true },
-        { group: "E", term: "ドント式", desc: "得票数を1, 2, 3...と自然数で割り、商の大きい順に議議席を割り振る方式。" },
-        { group: "E", term: "アダムズ式", desc: "人口を一定数で割り、端数を切り上げて定数を算出する方式。" },
-        { group: "E", term: "ボルダ式", isDistractor: true }
+        /* ダミー選択肢 */
+        { group: "A", term: "治安維持軍", isDistractor: true }, { group: "B", term: "非核二原則", isDistractor: true },
+        { group: "C", term: "行政管理庁", isDistractor: true }, { group: "F", term: "5分の4", isDistractor: true }
     ];
 
     let currentQueue = [];
@@ -230,8 +238,11 @@
     function startGame(mode) {
         currentMode = mode;
         isReverseMode = document.getElementById('reverse-mode-chk').checked;
-        const mainTasks = quizData.filter(q => q.desc);
-        currentQueue = shuffle([...mainTasks]);
+        const selectedCats = Array.from(document.querySelectorAll('.range-chk:checked')).map(cb => cb.value);
+        if (selectedCats.length === 0) { alert("出題範囲を選んでください"); return; }
+
+        const tasks = quizData.filter(q => selectedCats.includes(q.cat) && q.desc);
+        currentQueue = shuffle([...tasks]);
         currentIndex = 0;
         retryQueue = [];
         
@@ -252,9 +263,8 @@
         if (currentIndex >= currentQueue.length) {
             if (retryQueue.length > 0 && currentMode !== 'choice') {
                 currentQueue = shuffle([...retryQueue]);
-                retryQueue = [];
-                currentIndex = 0;
-                alert("間違えた問題を再挑戦します！");
+                retryQueue = []; currentIndex = 0;
+                alert("リトライを開始します！");
             } else {
                 document.getElementById('main-screen').classList.remove('active');
                 document.getElementById('result-screen').classList.add('active');
@@ -269,8 +279,23 @@
 
         if (currentMode === 'flashcard') {
             document.getElementById('flashcard-container').classList.remove('flipped');
-            document.getElementById('fc-front-content').textContent = isReverseMode ? data.desc : data.term;
-            document.getElementById('fc-back-content').textContent = isReverseMode ? data.term : data.desc;
+            const front = document.getElementById('fc-front-content');
+            const back = document.getElementById('fc-back-content');
+
+            // ★ 修正ポイント：モードに合わせてクラス（表示形式）も入れ替える
+            if (isReverseMode) {
+                // 意味（説明文）から用語を答える
+                front.textContent = data.desc;
+                front.className = 'fc-medium'; // 説明文は標準サイズ
+                back.textContent = data.term;
+                back.className = 'fc-large';   // 答えの用語は大きく
+            } else {
+                // 用語から意味を答える
+                front.textContent = data.term;
+                front.className = 'fc-large';  // 用語は大きく
+                back.textContent = data.desc;
+                back.className = 'fc-medium'; // 答えの説明文は標準
+            }
         } else {
             document.getElementById('question-text').textContent = isReverseMode ? data.term : data.desc;
             if (currentMode === 'choice') setupChoice(data);
@@ -286,16 +311,14 @@
         area.innerHTML = '';
         const correct = isReverseMode ? data.desc : data.term;
         const choices = [{text: correct, correct: true}];
-        
         let pool = quizData.filter(q => q.group === data.group && (isReverseMode ? q.desc : q.term) !== correct);
         if (pool.length < 3) pool = pool.concat(quizData.filter(q => q.group !== data.group));
-        
         shuffle(pool).slice(0, 3).forEach(p => choices.push({text: isReverseMode ? p.desc : p.term, correct: false}));
         
         shuffle(choices).forEach(c => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
-            btn.textContent = c.text || "(用語のみ)";
+            btn.textContent = c.text || "(なし)";
             btn.onclick = () => {
                 document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
                 const msg = document.getElementById('feedback-msg');
@@ -306,7 +329,7 @@
                     msg.className = 'feedback-msg correct';
                 } else {
                     btn.classList.add('wrong');
-                    msg.innerHTML = `残念！ 正解は: <strong>${correct}</strong>`;
+                    msg.innerHTML = `正解: <strong>${correct}</strong>`;
                     msg.className = 'feedback-msg wrong';
                 }
                 document.getElementById('next-btn').style.display = 'inline-block';
@@ -326,14 +349,11 @@
         const msg = document.getElementById('feedback-msg');
         input.disabled = true;
         msg.style.display = 'block';
-
         if (input.value.trim() === correct) {
-            msg.textContent = "正解です！";
-            msg.className = 'feedback-msg correct';
+            msg.textContent = "正解！"; msg.className = 'feedback-msg correct';
         } else {
             retryQueue.push(currentQueue[currentIndex]);
-            msg.innerHTML = `正解は: <strong>${correct}</strong>`;
-            msg.className = 'feedback-msg wrong';
+            msg.innerHTML = `正解: <strong>${correct}</strong>`; msg.className = 'feedback-msg wrong';
         }
         document.getElementById('next-btn').style.display = 'inline-block';
     }
