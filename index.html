@@ -53,13 +53,28 @@
         .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
         .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; cursor: pointer; }
 
-        .mode-select { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .mode-select { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
         .mode-btn {
             background-color: #fff; border: 2px solid var(--primary); color: var(--primary);
             padding: 12px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; cursor: pointer; transition: 0.2s;
             text-decoration: none; display: flex; align-items: center; justify-content: center;
         }
         .mode-btn:hover { background-color: var(--primary); color: #fff; }
+
+        /* 追加：データ一覧用スタイル */
+        .data-list-container {
+            text-align: left;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        .data-table { width: 100%; border-collapse: collapse; background: white; }
+        .data-table th, .data-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; font-size: 0.85rem; }
+        .data-table th { background: #f9fafb; position: sticky; top: 0; text-align: left; color: #4b5563; }
+        .data-table tr:last-child td { border-bottom: none; }
+        .term-cell { font-weight: bold; color: var(--primary); white-space: nowrap; }
 
         .link-btn { border-color: var(--link); color: var(--link); margin-top: 20px; width: 100%; }
         .link-btn:hover { background-color: var(--link); color: #fff; }
@@ -72,7 +87,6 @@
         .progress { font-size: 0.85rem; color: #6b7280; margin-bottom: 15px; font-weight: bold; }
         .question-box { font-size: 1.05rem; font-weight: bold; margin-bottom: 25px; line-height: 1.6; min-height: 100px; display: flex; align-items: center; justify-content: center; background: #f9fafb; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; }
 
-        /* フラッシュカード用フォント設定 */
         .fc-large { font-size: 1.6rem; font-weight: bold; color: var(--primary); }
         .fc-medium { font-size: 1.0rem; line-height: 1.6; color: var(--text); font-weight: normal; }
 
@@ -127,9 +141,26 @@
             <button class="mode-btn" onclick="startGame('flashcard')">カード</button>
             <button class="mode-btn" onclick="startGame('choice')">4択</button>
             <button class="mode-btn" onclick="startGame('input')">記述</button>
+            <button class="mode-btn" onclick="showDataList()">データ一覧</button>
         </div>
 
         <a href="https://sithigh21147.github.io/chemoti/" class="mode-btn link-btn">化学はこちら</a>
+    </div>
+
+    <div id="data-screen" class="screen">
+        <h1>収録データ一覧</h1>
+        <div class="data-list-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>用語</th>
+                        <th>説明</th>
+                    </tr>
+                </thead>
+                <tbody id="data-list-body"></tbody>
+            </table>
+        </div>
+        <button class="next-btn" onclick="location.reload()">戻る</button>
     </div>
 
     <div id="main-screen" class="screen">
@@ -168,7 +199,7 @@
 
 <script>
     const quizData = [
-            /* === 小テスト (公共3.csv) === */
+        /* === 小テスト (公共3.csv) === */
         { cat: "小テスト", group: "A", term: "警察予備隊", desc: "1950年に朝鮮戦争の勃発をきっかけに設けられた部隊。" },
         { cat: "小テスト", group: "B", term: "日米防衛協力のための指針", desc: "1978年に制定された「ガイドライン」、またの名を:" },
         { cat: "小テスト", group: "B", term: "非核三原則", desc: "核兵器をもたず、つくらず、もちこませず" },
@@ -266,13 +297,10 @@
         { cat: "重箱の隅をほじくる", group: "B", term: "55年体制", desc: "社会党再統一、自民党誕生、自民党政権維持の過去の体制。" },
         { cat: "重箱の隅をほじくる", group: "B", term: "細川内閣", desc: "1993年の非自民連立政権。「○○内閣」" },
 
-        /* === グループ別ダミー選択肢 (6個以上ずつ) === */
-        { group: "A", term: "特別警備隊", isDistractor: true }, { group: "A", term: "近衛兵", isDistractor: true }, { group: "A", term: "沿岸警備隊", isDistractor: true }, { group: "A", term: "軍政分離原則", isDistractor: true }, { group: "A", term: "国家防衛局", isDistractor: true }, { group: "A", term: "治安維持軍", isDistractor: true },
-        { group: "B", term: "平和維持条約", isDistractor: true }, { group: "B", term: "日米安全保障協力法", isDistractor: true }, { group: "B", term: "非軍事協力原則", isDistractor: true }, { group: "B", term: "重要拠点保護法", isDistractor: true }, { group: "B", term: "広域安保宣言", isDistractor: true }, { group: "B", term: "国際平和維持軍", isDistractor: true }, { group: "B", term: "政党寄付金禁止法", isDistractor: true },
-        { group: "C", term: "内閣総理協議会", isDistractor: true }, { group: "C", term: "裁判官罷免審判", isDistractor: true }, { group: "C", term: "行政監視委員会", isDistractor: true }, { group: "C", term: "不逮捕責任", isDistractor: true }, { group: "C", term: "法律改正権", isDistractor: true }, { group: "C", term: "住民自治法", isDistractor: true }, { group: "C", term: "起訴免除制度", isDistractor: true },
-        { group: "D", term: "中選挙区比例代表制", isDistractor: true }, { group: "D", term: "単記名投票制", isDistractor: true }, { group: "D", term: "比例代表並立連用制", isDistractor: true }, { group: "D", term: "足切り投票制", isDistractor: true }, { group: "D", term: "政党名簿拘束式", isDistractor: true }, { group: "D", term: "小選挙区単記制", isDistractor: true },
-        { group: "E", term: "ボルダ式", isDistractor: true }, { group: "E", term: "コンドルセ式", isDistractor: true }, { group: "E", term: "フィボナッチ式", isDistractor: true }, { group: "E", term: "サント=ラゲ式", isDistractor: true }, { group: "E", term: "自然数割振式", isDistractor: true }, { group: "E", term: "単純多数決式", isDistractor: true },
-        { group: "F", term: "3分の1", isDistractor: true }, { group: "F", term: "4分の3", isDistractor: true }, { group: "F", term: "5分の2", isDistractor: true }, { group: "F", term: "9割", isDistractor: true }, { group: "F", term: "半数", isDistractor: true }, { group: "F", term: "3割", isDistractor: true }, { group: "F", term: "5分の3", isDistractor: true }
+        /* ダミー */
+        { group: "A", term: "特別警備隊", isDistractor: true }, { group: "A", term: "近衛兵", isDistractor: true },
+        { group: "B", term: "平和維持条約", isDistractor: true }, { group: "B", term: "国際平和維持軍", isDistractor: true },
+        { group: "C", term: "内閣総理協議会", isDistractor: true }, { group: "C", term: "住民自治法", isDistractor: true }
     ];
 
     let currentQueue = [];
@@ -287,6 +315,27 @@
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
+    }
+
+    /* === 追加：データ一覧表示機能 === */
+    function showDataList() {
+        const body = document.getElementById('data-list-body');
+        body.innerHTML = '';
+        
+        // 選択肢用のダミーを除き、説明があるものだけを表示
+        const listData = quizData.filter(q => q.desc);
+        
+        listData.forEach(q => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="term-cell">${q.term}</td>
+                <td>${q.desc}</td>
+            `;
+            body.appendChild(tr);
+        });
+
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('data-screen').classList.add('active');
     }
 
     function startGame(mode) {
@@ -336,19 +385,16 @@
             const front = document.getElementById('fc-front-content');
             const back = document.getElementById('fc-back-content');
 
-            // ★ 修正ポイント：モードに合わせてクラス（表示形式）も入れ替える
             if (isReverseMode) {
-                // 意味（説明文）から用語を答える
                 front.textContent = data.desc;
-                front.className = 'fc-medium'; // 説明文は標準サイズ
+                front.className = 'fc-medium';
                 back.textContent = data.term;
-                back.className = 'fc-large';   // 答えの用語は大きく
+                back.className = 'fc-large';
             } else {
-                // 用語から意味を答える
                 front.textContent = data.term;
-                front.className = 'fc-large';  // 用語は大きく
+                front.className = 'fc-large';
                 back.textContent = data.desc;
-                back.className = 'fc-medium'; // 答えの説明文は標準
+                back.className = 'fc-medium';
             }
         } else {
             document.getElementById('question-text').textContent = isReverseMode ? data.term : data.desc;
